@@ -7,16 +7,24 @@ library(tidyverse)
 library(vroom)
 library(patchwork)
 library(DataExplorer)
-
+library(tidymodels)
+setwd("./KaggleBikeShare")
 ## Read in the Data
 bike <- vroom("./train.csv")
 
 ## EDA
 #make columns factors not numeric
+bike$dayofweek <- wday(bike$datetime)
+bike$hour <- hour(bike$datetime)
 bike <- bike %>%
-  mutate_at(c("season","holiday","workingday","weather"), factor)
+  mutate_at(c("season","holiday","workingday","weather","dayofweek","hour"), factor)
+bike <- subset(bike, select = -c(casual, registered, datetime)) %>%
+  select(-count, count)
 
-bike <- subset(bike, select = -c(datetime, casual, registered, atemp, holiday))
+
+
+
+
 
 plot_correlation(bike)
 plot_bar(bike)
